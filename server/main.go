@@ -133,8 +133,12 @@ func main() {
 	router := gin.Default()
 	hub := NewChatHub()
 
-	// Register route with handler.
+	// Register routes with handlers.
 	router.GET("/ws", hub.handleWS)
+
+	router.GET("health", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
 
 	// Start broadcasting.
 	go hub.broadcast()

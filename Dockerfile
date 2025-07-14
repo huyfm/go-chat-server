@@ -31,5 +31,7 @@ USER app
 # Server listens on port 5001 (defined in code).
 EXPOSE 5001
 
+ENV GIN_MODE=release
+
 # Entrypoint that starts the server.
 CMD [ "./chat-server" ]
