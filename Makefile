@@ -2,7 +2,7 @@ up:
 	@docker compose up --build -d
 
 log:
-	@docker compose logs -f --tail 100 chat-server 
+	@docker compose logs -f --tail 100 chat-server
 
 down:
 	@docker compose down -v
