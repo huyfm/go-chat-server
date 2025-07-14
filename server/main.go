@@ -105,7 +105,15 @@ func (h *ChatHub) broadcast() {
 			continue
 		}
 
-		for _, user := range h.users {
+		// Copy users to avoid race condition.
+		h.mu.Lock()
+		curUsers := make([]User, 0, len(h.users))
+		for _, u := range h.users {
+			curUsers = append(curUsers, u)
+		}
+		h.mu.Unlock()
+
+		for _, user := range curUsers {
 			// Do not echo back to message owner.
 			if user.Name == msg.Username {
 				continue
