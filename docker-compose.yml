@@ -1,0 +1,8 @@
+services:
+  chat-server:
+    build: .
+    image: chat-server:latest
+    container_name: chat-server
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
