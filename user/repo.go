@@ -8,24 +8,24 @@ import (
 )
 
 type User struct {
-	ID           int
-	Email        string
-	Username     string
-	PasswordHash string
-	CreatedAt    time.Time
+	ID           int       `json:"id"`
+	Email        string    `json:"email"`
+	Username     string    `json:"username"`
+	PasswordHash string    `json:"-"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
-type CreateParams struct {
-	Email    string
-	Username string
-	Password string
+type RegisterParams struct {
+	Email    string `json:"email" binding:"required,email"`
+	Username string `json:"username" binding:"required,max=50"`
+	Password string `json:"password" binding:"required,min=8,max=32"`
 }
 
 type UserRepo struct {
 	conn *pgx.Conn
 }
 
-func (r *UserRepo) CreateUser(ctx context.Context, p *CreateParams) (User, error) {
+func (r *UserRepo) CreateUser(ctx context.Context, p *RegisterParams) (User, error) {
 	sql := `
 		INSERT INTO users (username, email, password_hash)
 		VALUES ($1, $2, $3)

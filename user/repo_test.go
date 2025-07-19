@@ -43,7 +43,7 @@ func TestCreateUser(t *testing.T) {
 	defer clean(ctx, t, conn)
 
 	repo := &UserRepo{conn: conn}
-	pa := CreateParams{
+	pa := RegisterParams{
 		Username: "USER1",
 		Email:    "user1@email.com",
 		Password: "password",
