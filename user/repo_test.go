@@ -1,11 +1,14 @@
-package user
+package user_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
+	userpkg "local/chat/user"
+
 	"github.com/jackc/pgx/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 func setup(ctx context.Context, t *testing.T) *pgx.Conn {
@@ -42,12 +45,15 @@ func TestCreateUser(t *testing.T) {
 	conn := setup(ctx, t)
 	defer clean(ctx, t, conn)
 
-	repo := &UserRepo{conn: conn}
-	pa := RegisterParams{
+	repo := userpkg.NewUserRepo(conn)
+
+	pa := userpkg.RegisterParams{
 		Username: "USER1",
 		Email:    "user1@email.com",
 		Password: "password",
 	}
+
+	// Test create user OK.
 	user, err := repo.CreateUser(ctx, &pa)
 	if err != nil {
 		t.Error("err:", err)
@@ -59,7 +65,11 @@ func TestCreateUser(t *testing.T) {
 	if string(user.PasswordHash) == string(pa.Password) {
 		t.Error("plain password is stored directly in DB")
 	}
-	if !CheckPassword(pa.Password, user.PasswordHash) {
+	if !userpkg.CheckPassword(pa.Password, user.PasswordHash) {
 		t.Error("hash password logic failed")
 	}
+
+	// Test duplicate error.
+	_, err = repo.CreateUser(ctx, &pa)
+	assert.NotNil(t, err)
 }
